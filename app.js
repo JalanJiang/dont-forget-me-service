@@ -1,16 +1,22 @@
 var restify = require('restify');
-
-// 定义响应方法
-function respond(req, res, next) {
-    res.send('hello' + req.params.name);
-}
+var restifyPlugin = require('restify-plugins');
+var config = require('./config');
+//var config = require('config');
 
 // 创建服务
-var server = restify.createServer();
-server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
-
-// 监听 3900 接口
-server.listen(3900, function(){
-    console.log('%s listening at %s', server.name, server.url);
+var server = restify.createServer({
+    "name": config.name,
+    "version": config.version
 });
+
+server.use(restifyPlugin.jsonBodyParser({mapParams: true}));
+server.use(restifyPlugin.acceptParser(server.acceptable));
+server.use(restifyPlugin.queryParser({mapParams: true}));
+server.use(restifyPlugin.fullResponse());
+
+// 监听 8088 接口
+server.listen(config.port, function(){
+    console.log('server listening');
+});
+
+var route = require('./config/router')(server);
