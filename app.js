@@ -9,14 +9,17 @@ var server = restify.createServer({
     "version": config.version
 });
 
+// 中间件配置
 server.use(restifyPlugin.jsonBodyParser({mapParams: true}));
 server.use(restifyPlugin.acceptParser(server.acceptable));
 server.use(restifyPlugin.queryParser({mapParams: true}));
+server.use(restifyPlugin.bodyParser({mapParams: true}));
 server.use(restifyPlugin.fullResponse());
 
-// 监听 8088 接口
+// 监听 8088 端口
 server.listen(config.port, function(){
     console.log('server listening');
 });
 
+// 路由
 var route = require('./config/router')(server);
