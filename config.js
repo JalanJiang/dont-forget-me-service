@@ -5,5 +5,6 @@ module.exports = {
     db: {
         path: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/dont_forget",
         port: process.env.MONGODB_PORT || "27017"
-    }
+    },
+    secret: process.env.SECRET || "test_secret"
 };
