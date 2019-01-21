@@ -4,10 +4,6 @@ var timestamp = require('mongoose-timestamp');
 
 var accountSchema = new mongoose.Schema(
     {
-        uid: { // 用户uid
-            type: String,
-            required: true
-        },
         tel: { // 手机号（登录名）
             type: String,
             required: true
