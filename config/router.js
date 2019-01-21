@@ -6,17 +6,20 @@
 module.exports = function (server) {
 
     var account = require('../controller/accountController');
-    var auth = require('../controller/authController');
     var user = require('../controller/userController');
     var book = require('../controller/bookController');
     var note = require('../controller/noteController');
 
+    // 中间件
+    var authMiddleware = require('../middleware/authController');
+    var accountMiddleware = require('../middleware/accountController');
+
     // 鉴权与账号验证
-    server.use(auth.checkAuth); //鉴权
-    server.use(account.checkToken); //用户 Token 验证
+    server.use(authMiddleware.checkAuth); //鉴权
+    server.use(accountMiddleware.checkToken); //用户 Token 验证
 
     // 账号体系
-    server.post('/v1/account/registry', account.registry); //用户注册
+    server.post('/v1/account/register', account.registry); //用户注册
     server.post('/v1/account/login', account.login); //用户登录
 
     // 用户
