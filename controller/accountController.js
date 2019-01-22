@@ -61,19 +61,43 @@ function accountController()
     // 账号登录
     this.login = function (req, res, next) {
 
-        var tel = req.body.username;
+        var tel = req.body.name;
         var password = req.body.password;  // 接收时已加密
+        password = entryptPassword(password);
 
         if (tel == '' || password == '') {
-            //util.send(400, '用户名或密码不能为空');
+            base.returnError(
+                res,
+                con.HTTP_CODE_CILENT_ERR,
+                con.HTTP_CODE_CILENT_ERR,
+                "账号或密码不能为空"
+            );
         }
 
-        Account.findOne({tel: tel, password: password}, function (err, doc) {
-            if (err) { // 登录失败，返回错误信息
+        console.log({tel: tel, password: password});
 
-            } else { // 登录成功，返回 token
-                var token = setToken(doc);
-                res.send({'token': token});
+        Account.findOne({tel: tel, password: password}, function (err, doc) {
+            if (err) {
+                base.returnError(
+                    res,
+                    con.HTTP_CODE_SERVER_ERR,
+                    con.HTTP_CODE_CILENT_ERR,
+                    "服务器错误"
+                );
+            } else {
+                if (doc) {
+                    // 登录成功
+                    var token = setToken(doc);
+                    base.returnSuccess(res, {'token': token});
+                } else {
+                    // 账号或密码错误
+                    base.returnError(
+                        res,
+                        con.HTTP_CODE_CILENT_ERR,
+                        con.ERR_CODE_LOGIN_INFO,
+                        "账号或密码错误"
+                    );
+                }
             }
         });
     }
@@ -81,10 +105,10 @@ function accountController()
     // 生成 token 并设置用户 token 缓存
     function setToken(user) {
         // token 生成
-        var token = jwt.sign(user, config.secret, {
+        var accessToken = jwt.sign(user.toJSON(), config.secret, {
             expiresIn: 1200
         });
-        return token;
+        return accessToken;
     }
     
     // 验证码验证
