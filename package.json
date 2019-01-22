@@ -1,0 +1,35 @@
+{
+  "name": "dont-forget-me-service",
+  "version": "1.0.0",
+  "description": "dont-forget-me-service",
+  "main": "app.js",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "jsonwebtoken": "^8.4.0",
+    "mongoose-string-query": "^0.2.5",
+    "mongoose": "^5.4.4",
+    "mongoose-timestamp": "^0.6.0",
+    "restify": "^7.5.0",
+    "restify-errors": "^6.1.1",
+    "restify-plugins": "^1.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JalanJiang/dont-forget-me-service.git"
+  },
+  "keywords": [
+    "nodejs",
+    "mongodb",
+    "api"
+  ],
+  "author": "JalanJiang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JalanJiang/dont-forget-me-service/issues"
+  },
+  "homepage": "https://github.com/JalanJiang/dont-forget-me-service#readme"
+}
