@@ -17,7 +17,7 @@ function accountController()
 
         Account.findOne({tel: tel}, function (err, doc) {
             if (err) {
-                console.log(err);
+                base.returnError(res, con.HTTP_CODE_SERVER_ERR, con.HTTP_CODE_SERVER_ERR, err);
             } else if (!doc) {
                 // 验证码验证处理
                 if (checkRegisterCode(tel, code)) { //验证通过
