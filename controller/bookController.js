@@ -89,7 +89,18 @@ function bookController()
 
     // 获取记本列表
     this.getBookList = function (req, res, next) {
-        res.send({"code": 101});
+        var uid = req.uid;
+        Book.find({uid: uid}, function (err, books) {
+            if (err) {
+                base.returnError(
+                    res,
+                    error.code.HTTP_CODE_SERVER_ERR,
+                    err
+                );
+            } else {
+                base.returnSuccess(res, books);
+            }
+        });
     }
 }
 
