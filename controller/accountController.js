@@ -54,6 +54,7 @@ function accountController()
                     base.returnError(
                         res,
                         error.code.HTTP_CODE_CILENT_ERR,
+                        undefined,
                         error.code.ERR_CODE_ACCOUNT_REGISTER_INVALID_CODE
                     );
                 }
@@ -62,6 +63,7 @@ function accountController()
                 base.returnError(
                     res,
                     error.code.HTTP_CODE_CILENT_ERR,
+                    undefined,
                     error.code.ERR_CODE_ACCOUNT_REGISTER_ALREADY
                 );
             }

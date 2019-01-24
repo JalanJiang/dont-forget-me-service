@@ -3,6 +3,7 @@ function accountController()
     var jwt = require('jsonwebtoken');
     var config = require('../config');
     var base = require('../controller/baseController');
+    var error = require('../config/err');
     // 验证用户 Token
     this.checkToken = function (req, res, next) {
 
