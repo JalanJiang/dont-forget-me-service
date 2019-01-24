@@ -23,6 +23,7 @@ module.exports = function (server) {
     server.post('/v1/account/login', account.login); //用户登录
 
     // 用户
+    server.get('/v1/user', user.getUserInfo); //获取用户信息
 
     // 记本
     server.post('/v1/book', book.createBook); //创建记本
