@@ -8,7 +8,7 @@ var mongoose = require("mongoose");
 var config = require("../config"); //配置文件
 
 // 数据库连接
-mongoose.connect(config.db.path);
+mongoose.connect(config.db.path, {useNewUrlParser: true});
 var db = mongoose.connection;
 
 // 事件监听：错误
