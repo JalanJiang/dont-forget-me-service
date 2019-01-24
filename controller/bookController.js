@@ -1,6 +1,8 @@
 function bookController()
 {
     var Book = require('../model/book');
+    var base = require('./baseController');
+    var error = require('../config/err');
 
     // 创建记本
     this.createBook = function (req, res) {
@@ -9,7 +11,7 @@ function bookController()
         var cover = req.body.cover;
         var description = req.body.description;
         var isPrivate = req.body.is_private || 1;
-        var uid = req.body.uid;
+        var uid = req.uid;
 
         console.log(req.body);
 
@@ -23,10 +25,13 @@ function bookController()
 
         bookModel.save(function (err, book) {
            if (err) {
-               res.status(500);
-               res.send({"err_message": err});
+               base.returnError(
+                   res,
+                   error.code.HTTP_CODE_SERVER_ERR,
+                   err
+               );
            } else {
-               res.json(book);
+               base.returnSuccess(res, book);
            }
         });
     }
@@ -52,11 +57,34 @@ function bookController()
 
     // 更新记本
     this.updateBook = function (req, res, next) {
-        
+
     }
 
     // 获取记本详情
     this.getBook = function (req, res, next) {
+
+        var uid = req.uid;
+        var bookId = req.params.id;
+
+        Book.findOne({uid: uid, _id: bookId}, function (err, book) {
+            if (err) {
+                base.returnError(
+                    res,
+                    error.code.HTTP_CODE_SERVER_ERR,
+                    err
+                );
+            } else {
+                if (book) {
+                    base.returnSuccess(res, book);
+                } else {
+                    base.returnError(
+                        res,
+                        error.code.HTTP_CODE_CILENT_ERR,
+                        "记本不存在"
+                    );
+                }
+            }
+        });
     }
 
     // 获取记本列表
