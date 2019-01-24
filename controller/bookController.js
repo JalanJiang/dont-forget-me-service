@@ -34,6 +34,20 @@ function bookController()
     // 删除记本
     this.deleteBook = function (req, res, next) {
 
+        var uid = req.uid;
+        var bookId = req.params.id;
+
+        Book.removeOne({uid: uid, _id: bookId}, function (err, result) {
+            if (err) {
+                base.returnError(
+                    res,
+                    error.code.HTTP_CODE_SERVER_ERR,
+                    err
+                );
+            } else {
+                base.returnSuccess(res);
+            }
+        });
     }
 
     // 更新记本
