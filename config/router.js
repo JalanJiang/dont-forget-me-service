@@ -27,7 +27,7 @@ module.exports = function (server) {
 
     // 记本
     server.post('/v1/book', book.createBook); //创建记本
-    server.del('/v1/book', book.deleteBook); //删除记本
+    server.del('/v1/book/:id', book.deleteBook); //删除记本
     server.patch('/v1/book', book.updateBook); //更新记本
     server.get('/v1/book/:id', book.getBook); //获取记本详情
     server.get('/v1/books', book.getBookList); //获取记本列表
