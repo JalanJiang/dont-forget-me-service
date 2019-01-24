@@ -2,7 +2,7 @@ function userController()
 {
     var User = require('../model/user');
     var base = require('./baseController');
-    var con = require('../const');
+    var error = require('../config/err');
 
     this.getUserInfo = function (req, res, next) {
 
@@ -12,9 +12,7 @@ function userController()
             if (err) {
                 base.returnError(
                     res,
-                    con.HTTP_CODE_SERVER_ERR,
-                    con.HTTP_CODE_SERVER_ERR,
-                    "服务器出错"
+                    error.code.HTTP_CODE_CILENT_ERR
                 );
             } else {
                 if (doc) {
@@ -23,8 +21,7 @@ function userController()
                     // 用户不存在
                     base.returnError(
                         res,
-                        con.HTTP_CODE_CILENT_ERR,
-                        con.HTTP_CODE_CILENT_ERR,
+                        error.code.HTTP_CODE_CILENT_ERR,
                         "用户不存在"
                     );
                 }

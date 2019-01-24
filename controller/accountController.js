@@ -4,7 +4,7 @@ function accountController()
     var crypto = require('crypto'); //crypto
 
     var config = require('../config');
-    var con = require('../const');
+    var error = require('../config/err');
     var base = require('./baseController');
     var nickname = require('./nicknameController');
     var Account = require('../model/account');
@@ -21,9 +21,7 @@ function accountController()
             if (err) {
                 base.returnError(
                     res,
-                    con.HTTP_CODE_SERVER_ERR,
-                    con.HTTP_CODE_SERVER_ERR,
-                    err
+                    error.code.HTTP_CODE_SERVER_ERR
                 );
             } else if (!doc) {
                 // 验证码验证处理
@@ -39,8 +37,7 @@ function accountController()
                         if (err) { // 注册失败
                             base.returnError(
                                 res,
-                                con.HTTP_CODE_SERVER_ERR,
-                                con.HTTP_CODE_SERVER_ERR,
+                                error.code.HTTP_CODE_SERVER_ERR,
                                 "注册失败"
                             );
                         } else {
@@ -56,18 +53,16 @@ function accountController()
                 } else { //验证不通过
                     base.returnError(
                         res,
-                        con.HTTP_CODE_CILENT_ERR,
-                        con.HTTP_CODE_CILENT_ERR,
-                        "验证码错误"
+                        error.code.HTTP_CODE_CILENT_ERR,
+                        error.code.ERR_CODE_ACCOUNT_REGISTER_INVALID_CODE
                     );
                 }
             } else {
                 // 账号已注册
                 base.returnError(
                     res,
-                    con.HTTP_CODE_CILENT_ERR,
-                    con.HTTP_CODE_CILENT_ERR,
-                    "用户已注册"
+                    error.code.HTTP_CODE_CILENT_ERR,
+                    error.code.ERR_CODE_ACCOUNT_REGISTER_ALREADY
                 );
             }
         })
@@ -83,8 +78,7 @@ function accountController()
         if (tel == '' || password == '') {
             base.returnError(
                 res,
-                con.HTTP_CODE_CILENT_ERR,
-                con.HTTP_CODE_CILENT_ERR,
+                error.code.HTTP_CODE_CILENT_ERR,
                 "账号或密码不能为空"
             );
         }
@@ -95,9 +89,7 @@ function accountController()
             if (err) {
                 base.returnError(
                     res,
-                    con.HTTP_CODE_SERVER_ERR,
-                    con.HTTP_CODE_CILENT_ERR,
-                    "服务器错误"
+                    error.code.HTTP_CODE_SERVER_ERR
                 );
             } else {
                 if (doc) {
@@ -108,9 +100,8 @@ function accountController()
                     // 账号或密码错误
                     base.returnError(
                         res,
-                        con.HTTP_CODE_CILENT_ERR,
-                        con.ERR_CODE_LOGIN_INFO,
-                        "账号或密码错误"
+                        error.code.HTTP_CODE_CILENT_ERR,
+                        error.code.ERR_CODE_ACCOUNT_LOGIN
                     );
                 }
             }

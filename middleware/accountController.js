@@ -1,4 +1,8 @@
-function accountController() {
+function accountController()
+{
+    var jwt = require('jsonwebtoken');
+    var config = require('../config');
+    var base = require('../controller/baseController');
     // 验证用户 Token
     this.checkToken = function (req, res, next) {
 
@@ -7,24 +11,35 @@ function accountController() {
 
         // 用户登录、注册无需验证
         if (reqRouteList[2] !== 'account') {
-            var token = req.body.token || req.query.token;
+
+            if (req.method == "POST") {
+                token = req.body.token;
+            } else {
+                token = req.query.token;
+            }
 
             if (token) {
                 // token 验证逻辑
                 jwt.verify(token, config.secret, function (err, decode) {
                     if (err) {
                         // 验证失败
+                        base.returnError(
+                            res,
+                            error.code.HTTP_CODE_CILENT_ERR,
+                            error.code.ERR_CODE_ACCOUNT_TOKEN_VALID
+                        );
                     } else {
-                        // 验证成功：获取 uid
-                        // req.body.uid = '10002';
+                        req.uid = decode._id; // 从解密结果获取uid
                     }
                 });
 
-                // console.log('check_token');
                 return next();
             } else {
-                res.status(400);
-                return res.send({'err_message': 'token 不存在'});
+                base.returnError(
+                    res,
+                    error.code.HTTP_CODE_CILENT_ERR,
+                    "token 未传递"
+                );
             }
         } else {
             return next();
