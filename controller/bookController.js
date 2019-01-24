@@ -57,7 +57,26 @@ function bookController()
 
     // 更新记本
     this.updateBook = function (req, res, next) {
+        var uid = req.uid;
+        var bookId = req.params.id;
 
+        var name = req.query.name;
+        var description = req.query.description;
+        var cover = req.query.cover;
+        var isPrivate = parseInt(req.query.is_private);
+        if (isPrivate !== 0 || isPrivate !== 1) isPrivate = 0;
+
+        Book.findOneAndUpdate({uid: uid, _id: bookId}, {name: name, description: description, cover: cover, is_private: isPrivate}, {new: true}, function (err, book) {
+            if (err) {
+                base.returnError(
+                    res,
+                    error.code.HTTP_CODE_SERVER_ERR,
+                    err
+                );
+            } else {
+                base.returnSuccess(res, book);
+            }
+        })
     }
 
     // 获取记本详情
