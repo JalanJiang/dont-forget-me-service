@@ -6,26 +6,35 @@ function accountController()
     var config = require('../config');
     var con = require('../const');
     var base = require('./baseController');
+    var nickname = require('./nicknameController');
     var Account = require('../model/account');
+    var User = require('../model/user');
 
     // 账号注册
     this.registry = function (req, res, next) {
-        // 验证逻辑：是否重复注册，验证码是否校验成功，密码是否符合规范，手机号是否符合规范，随机分配昵称
-        var tel = req.body.tel;
-        var password = req.body.password;
+
+        var tel = req.body.tel; //@todo 手机号格式验证
+        var password = req.body.password; //@todo 密码格式验证
         var code = req.body.code;
 
         Account.findOne({tel: tel}, function (err, doc) {
             if (err) {
-                base.returnError(res, con.HTTP_CODE_SERVER_ERR, con.HTTP_CODE_SERVER_ERR, err);
+                base.returnError(
+                    res,
+                    con.HTTP_CODE_SERVER_ERR,
+                    con.HTTP_CODE_SERVER_ERR,
+                    err
+                );
             } else if (!doc) {
                 // 验证码验证处理
                 if (checkRegisterCode(tel, code)) { //验证通过
                     password = entryptPassword(password);
                     var accountModel = new Account({
                         tel: tel,
-                        password: password
+                        password: password,
+                        //nickname: nickname.getNickname()
                     });
+                    // 创建账号
                     accountModel.save(function (err, account) {
                         if (err) { // 注册失败
                             base.returnError(
@@ -35,6 +44,12 @@ function accountController()
                                 "注册失败"
                             );
                         } else {
+                            // 创建成功
+                            var userModel = new User({
+                                uid: account._id,
+                                nickname: nickname.getNickname()
+                            });
+                            userModel.save(); //在用户表创建一个相关用户，给予随机昵称
                             base.returnSuccess(res);
                         }
                     });
@@ -102,7 +117,7 @@ function accountController()
         });
     }
 
-    // 生成 token 并设置用户 token 缓存
+    // 生成 token
     function setToken(user) {
         // token 生成
         var accessToken = jwt.sign(user.toJSON(), config.secret, {

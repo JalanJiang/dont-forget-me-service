@@ -9,10 +9,11 @@ var userSchema = new mongoose.Schema(
         },
         avatar: { // 头像
             type: String,
-            required: true
+            default: ""
         },
         description: { // 个人简介
-            type: String
+            type: String,
+            default: ""
         },
         nickname: { // 昵称
             type: String,

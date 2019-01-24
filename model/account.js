@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var mongoose = require('../config/db').mongoose;
 var mongooseStringQuery = require('mongoose-string-query');
 var timestamp = require('mongoose-timestamp');
 
