@@ -17,7 +17,7 @@ jobs:
               DOCKER_IMAGE_TAG=v${CIRCLE_BUILD_NUM}
               echo "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG" > full_docker_image_name
             else
-              DOCKER_IMAGE_TAG=${CIRCLE_BRANCH}
+              DOCKER_IMAGE_TAG=${CIRCLE_BRANCH}-v${CIRCLE_BUILD_NUM}
               echo "gcr.io/oval-machine-199603/dont-forget-service:$DOCKER_IMAGE_TAG" > full_docker_image_name
             fi
       - run:
@@ -34,8 +34,50 @@ jobs:
             gcloud --quiet auth configure-docker
             docker push $FULL_DOCKER_IMAGE_NAME
 
+  deploy:
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - attach_workspace:
+          at: workspace
+      - run:
+          name: Install utils
+          command: |
+            apt-get update
+            apt-get install jq
+      - run:
+          name: Deploy
+          command: |
+            echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > gcloud-service-key.json
+            set -x
+            gcloud auth activate-service-account --key-file gcloud-service-key.json
+            gcloud --quiet config set project $GOOGLE_PROJECT_ID
+            gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
+            EXISTING_CLUSTER=$(gcloud container clusters list --format="value(name)" --filter="name=$GOOGLE_CLUSTER_NAME")
+            if [ "${EXISTING_CLUSTER}" != $GOOGLE_CLUSTER_NAME ]
+            then
+              # Create cluster if it doesn't already exist
+              gcloud --quiet container clusters create $GOOGLE_CLUSTER_NAME --num-nodes=1
+            else
+              gcloud --quiet container clusters get-credentials $GOOGLE_CLUSTER_NAME
+            fi
+            FULL_DOCKER_IMAGE_NAME=$(cat workspace/full_docker_image_name)
+            # Replace DOCKER_IMAGE_NAME placeholder in manifest with actual image name
+            KUBE_CONFIG=$(cat hello-app/manifests/helloweb-all-in-one.yaml.template | sed "s|DOCKER_IMAGE_NAME|$FULL_DOCKER_IMAGE_NAME|g")
+            echo "$KUBE_CONFIG" | kubectl apply -f -
+            # Wait for deployment to finish
+            kubectl rollout status deployment/helloweb
+            kubectl get pods
+
 workflows:
   version: 2
   build-deploy:
     jobs:
       - build
+      - deploy:
+          requires:
+            - build
+#          filters:
+#            branches:
+#              only: master
