@@ -23,16 +23,16 @@ jobs:
       - run:
           name: Build image
           command: |
-          FULL_DOCKER_IMAGE_NAME=$(cat full_docker_image_name)
-          docker build -t $FULL_DOCKER_IMAGE_NAME .
+            FULL_DOCKER_IMAGE_NAME=$(cat full_docker_image_name)
+            docker build -t $FULL_DOCKER_IMAGE_NAME .
       - run:
           name: Push image
           command: |
-          FULL_DOCKER_IMAGE_NAME=$(cat full_docker_image_name)
-          echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > gcloud-service-key.json
-          gcloud auth activate-service-account --key-file gcloud-service-key.json
-          gcloud --quiet auth configure-docker
-          docker push $FULL_DOCKER_IMAGE_NAME
+            FULL_DOCKER_IMAGE_NAME=$(cat full_docker_image_name)
+            echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > gcloud-service-key.json
+            gcloud auth activate-service-account --key-file gcloud-service-key.json
+            gcloud --quiet auth configure-docker
+            docker push $FULL_DOCKER_IMAGE_NAME
 
 workflows:
   version: 2
