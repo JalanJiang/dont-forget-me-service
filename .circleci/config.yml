@@ -1,0 +1,41 @@
+version: 2
+defaults: &defaults
+  docker:
+    - image: google/cloud-sdk@sha256:126a49cfa2aa6e20d561fa14999bf657bc341efeba04939bd2f612bf843d12a6
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Generate image name
+          command: |
+            set -x
+            if [ "${CIRCLE_BRANCH}" == "master" ]
+            then
+              DOCKER_IMAGE_TAG=v${CIRCLE_BUILD_NUM}
+              echo "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG" > full_docker_image_name
+            else
+              DOCKER_IMAGE_TAG=${CIRCLE_BRANCH}
+              echo "gcr.io/oval-machine-199603/dont-forget-service:$DOCKER_IMAGE_TAG" > full_docker_image_name
+            fi
+      - run:
+          name: Build image
+          command: |
+          FULL_DOCKER_IMAGE_NAME=$(cat full_docker_image_name)
+          docker build -t $FULL_DOCKER_IMAGE_NAME .
+      - run:
+          name: Push image
+          command: |
+          FULL_DOCKER_IMAGE_NAME=$(cat full_docker_image_name)
+          echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > gcloud-service-key.json
+          gcloud auth activate-service-account --key-file gcloud-service-key.json
+          gcloud --quiet auth configure-docker
+          docker push $FULL_DOCKER_IMAGE_NAME
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
