@@ -67,8 +67,6 @@ jobs:
               gcloud --quiet container clusters get-credentials $GOOGLE_CLUSTER_NAME
             fi
             FULL_DOCKER_IMAGE_NAME=$(cat workspace/full_docker_image_name)
-            # Replace DOCKER_IMAGE_NAME placeholder in manifest with actual image name
-            #KUBE_CONFIG=$(cat manifests/venceremos.yaml.template | sed "s|DOCKER_IMAGE_NAME|$FULL_DOCKER_IMAGE_NAME|g")
             kubectl --namespace=default set image deployment/venceremos dont-forget-service=$FULL_DOCKER_IMAGE_NAME --record
             #echo "$KUBE_CONFIG" | kubectl apply -f -
             # Wait for deployment to finish
