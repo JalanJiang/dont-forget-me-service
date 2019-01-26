@@ -18,7 +18,7 @@ jobs:
               echo "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG" > full_docker_image_name
             else
               DOCKER_IMAGE_TAG=${CIRCLE_BRANCH}-v${CIRCLE_BUILD_NUM}
-              echo "gcr.io/oval-machine-199603/dont-forget-service:$DOCKER_IMAGE_TAG" > full_docker_image_name
+              echo "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG" > full_docker_image_name
             fi
       - run:
           name: Build image
