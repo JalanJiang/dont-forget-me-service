@@ -6,4 +6,4 @@ RUN npm install
 
 EXPOSE 8088
 
-#ENTRYPOINT ["node", "app.js"]
+ENTRYPOINT ["node", "app.js"]
