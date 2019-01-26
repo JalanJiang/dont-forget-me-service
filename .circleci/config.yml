@@ -18,7 +18,7 @@ jobs:
               echo "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG" > full_docker_image_name
             else
               DOCKER_IMAGE_TAG=${CIRCLE_BRANCH}-v${CIRCLE_BUILD_NUM}
-              echo "$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG" > full_docker_image_name
+              echo "gcr.io/oval-machine-199603/dont-forget-service:$DOCKER_IMAGE_TAG" > full_docker_image_name
             fi
       - run:
           name: Build image
@@ -32,7 +32,6 @@ jobs:
             echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > gcloud-service-key.json
             gcloud auth activate-service-account --key-file gcloud-service-key.json
             gcloud --quiet auth configure-docker
-            echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
             docker push $FULL_DOCKER_IMAGE_NAME
       - persist_to_workspace:
           root: .
@@ -80,9 +79,9 @@ workflows:
   build-deploy:
     jobs:
       - build
-#      - deploy:
-#          requires:
-#            - build
-#          filters:
-#            branches:
-#              only: master
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
